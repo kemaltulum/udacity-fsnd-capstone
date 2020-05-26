@@ -1,5 +1,6 @@
 import os
-from sqlalchemy import Column, String, Integer, DateTime, relationship, create_engine
+from sqlalchemy import Column, String, Integer, DateTime, create_engine
+from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 import json
 
@@ -59,7 +60,7 @@ class Movie(db.Model):
 '''
 Actor
 '''
-class Category(db.Model):  
+class Actor(db.Model):  
   __tablename__ = 'categories'
 
   id = Column(Integer, primary_key=True)
