@@ -1,9 +1,11 @@
 import os
-from sqlalchemy import Column, String, Integer, DateTime, create_engine
+from sqlalchemy import Column, String, Integer, DateTime, relationship, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 
-database_name = "trivia"
+from flask_migrate import Migrate
+
+database_name = "capstone"
 # database_path = "postgres://{}/{}".format('localhost:5432', database_name)
 database_path = "postgres:///{}".format(database_name)
 
@@ -19,6 +21,7 @@ def setup_db(app, database_path=database_path):
     db.app = app
     db.init_app(app)
     db.create_all()
+    migrate = Migrate(app, db)
 
 '''
 Movie
@@ -29,6 +32,7 @@ class Movie(db.Model):
   id = Column(Integer, primary_key=True)
   title = Column(String)
   release_date = Column(DateTime)
+  actors = relationship('Actor', backref='movie')
 
   def __init__(self, title, release_date):
     self.title = title
