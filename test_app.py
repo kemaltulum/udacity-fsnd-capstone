@@ -92,6 +92,7 @@ class CapstoneTestCase(unittest.TestCase):
 
 		self.assertEqual(res.status_code, 200)
 		self.assertTrue(data['success'])
+		self.assertEqual(data['deleted'], delete_id_movie)
 
 		res = self.client().get('/movies')
 		m_data = json.loads(res.data)
@@ -120,6 +121,7 @@ class CapstoneTestCase(unittest.TestCase):
 
 		self.assertEqual(res.status_code, 200)
 		self.assertTrue(data['success'])
+		self.assertEqual(data['deleted'], delete_id_actor)
 
 		res = self.client().get('/actors')
 		a_data = json.loads(res.data)
