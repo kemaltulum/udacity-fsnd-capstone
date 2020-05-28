@@ -189,6 +189,61 @@ def create_app(test_config=None):
 			"success": True
 		})
 
+	'''
+	DELETE /movies/<int:movie_id>
+	Deletes the movie with given id 
+
+	Example Request: curl --request DELETE 'http://localhost:5000/movies/1'
+
+	Example Response: 
+	{
+		"deleted": 1,
+		"success": true
+	}
+	'''
+	@app.route('/movies/<int:movie_id>', methods=['DELETE'])
+	def delete_movie(movie_id):
+		movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
+
+		if movie is None:
+			abort(404)
+
+		movie.delete()
+
+		return jsonify({
+			'success': True,
+			'deleted': movie_id
+		})
+
+
+	'''
+	DELETE /actors/<int:actor_id>
+	Deletes the actor with given id 
+
+	Example Request: curl --request DELETE 'http://localhost:5000/actors/1'
+
+	Example Response: 
+	{
+		"deleted": 1,
+		"success": true
+	}
+	'''
+	@app.route('/actors/<int:actor_id>', methods=['DELETE'])
+	def delete_actor(actor_id):
+		actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
+
+		if actor is None:
+			abort(404)
+
+		actor.delete()
+
+		return jsonify({
+			'success': True,
+			'deleted': actor_id
+		})
+
+	
+
 		
 	def get_error_message(error, default_message):
 		try:
