@@ -112,6 +112,84 @@ def create_app(test_config=None):
 			"actors": actors
 		})
 
+	'''
+	POST /movies
+	Creates a new movie.
+	Requires the title and release date.
+
+	Example Request: (Create)
+	curl --location --request POST 'http://localhost:5000/movies' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"title": "Pek Yakında",
+			"release_date": "19-02-2020"
+		}'
+
+	Example Response: 
+	{
+		"success": true
+	}
+	'''
+	@app.route('/movies', methods=['POST'])
+	def create_movie():
+		body = request.get_json()
+
+		title = body.get('title', None)
+		release_date = body.get('release_date', None)
+
+
+		if title is None or release_date is None:
+			abort(400)
+		
+		movie = Movie(title=title, 
+							release_date=release_date)
+
+		movie.insert()
+
+		return jsonify({
+			"success": True
+		})
+
+		'''
+	POST /actors
+	Creates a new actor.
+	Requires the name, age and gender of the actor.
+
+	Example Request: (Create)
+	curl --location --request POST 'http://localhost:5000/actors' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"name": "Cem Yılmaz",
+			"age": "45",
+			"gender": "M"
+		}'
+
+	Example Response: 
+	{
+		"success": true
+	}
+	'''
+	@app.route('/actors', methods=['POST'])
+	def create_actor():
+		body = request.get_json()
+
+		name = body.get('name', None)
+		age = body.get('age', None)
+		gender = body.get('gender', None)
+
+
+		if name is None or age is None or gender is None:
+			abort(400)
+		
+		actor = Actor(name=name, age=age, gender=gender)
+
+		actor.insert()
+
+		return jsonify({
+			"success": True
+		})
+
+		
 	return app
 
 APP = create_app()
