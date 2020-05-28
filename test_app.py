@@ -26,5 +26,26 @@ class CapstoneTestCase(unittest.TestCase):
 		"""Executed after reach test"""
 		pass
 
+	def test_get_movies(self):
+		res = self.client().get('/movies')
+		data = json.loads(res.data)
+
+		self.assertEqual(res.status_code, 200)
+		self.assertTrue(data['success'])
+		self.assertEqual(type(data["movies"]), type([]))
+		self.assertEqual(len(data["movies"]), 4)
+
+	def test_get_actors(self):
+		res = self.client().get('/actors')
+		data = json.loads(res.data)
+
+		self.assertEqual(res.status_code, 200)
+		self.assertTrue(data['success'])
+		self.assertEqual(type(data["actors"]), type([]))
+		self.assertEqual(len(data["actors"]), 5)
+
 	
 
+# Make the tests conveniently executable
+if __name__ == "__main__":
+	unittest.main()
