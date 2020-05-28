@@ -143,6 +143,46 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertEqual(res.status_code, 404)
 		self.assertFalse(data['success'])
 
+	def test_update_movie(self):
+		update_id_movie = 2
+		new_title = "Eyvah eyvah 2"
+		res = self.client().patch(f'/movies/{update_id_movie}', json={'title': new_title})
+		data = json.loads(res.data)
+
+		self.assertEqual(res.status_code, 200)
+		self.assertTrue(data['success'])
+		self.assertEqual(data['updated']['id'], update_id_movie)
+		self.assertEqual(data['updated']['title'], new_title)
+
+	def test_update_movie_fail_404(self):
+		update_id_movie = -100
+		res = self.client().patch(f'/movies/{update_id_movie}')
+		data = json.loads(res.data)
+
+		self.assertEqual(res.status_code, 404)
+		self.assertFalse(data['success'])
+
+	def test_update_actor(self):
+		update_id_actor = 2
+		new_name = "Tom Hanks"
+		new_age = 54
+		res = self.client().patch(f'/actors/{update_id_actor}', json={'name': new_name, 'age': new_age})
+		data = json.loads(res.data)
+
+		self.assertEqual(res.status_code, 200)
+		self.assertTrue(data['success'])
+		self.assertEqual(data['updated']['id'], update_id_actor)
+		self.assertEqual(data['updated']['name'], new_name)
+		self.assertEqual(data['updated']['age'], new_age)
+
+	def test_update_actor_fail_404(self):
+		update_id_actor = -100
+		res = self.client().patch(f'/actors/{update_id_actor}')
+		data = json.loads(res.data)
+
+		self.assertEqual(res.status_code, 404)
+		self.assertFalse(data['success'])
+
 	
 
 # Make the tests conveniently executable
