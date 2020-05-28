@@ -1,6 +1,5 @@
 import os
 from sqlalchemy import Column, String, Integer, DateTime, create_engine
-from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 import json
 
@@ -33,7 +32,6 @@ class Movie(db.Model):
   id = Column(Integer, primary_key=True)
   title = Column(String)
   release_date = Column(DateTime)
-  actors = relationship('Actor', backref='movie')
 
   def __init__(self, title, release_date):
     self.title = title
