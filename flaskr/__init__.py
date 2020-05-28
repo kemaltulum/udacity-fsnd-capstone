@@ -139,7 +139,7 @@ def create_app(test_config=None):
 
 
 		if title is None or release_date is None:
-			abort(400)
+			abort(400, "Missing field for Movie")
 		
 		movie = Movie(title=title, 
 							release_date=release_date)
@@ -179,7 +179,7 @@ def create_app(test_config=None):
 
 
 		if name is None or age is None or gender is None:
-			abort(400)
+			abort(400, "Missing field for Actor")
 		
 		actor = Actor(name=name, age=age, gender=gender)
 
@@ -190,6 +190,48 @@ def create_app(test_config=None):
 		})
 
 		
+	def get_error_message(error, default_message):
+		try:
+			return error.description
+		except:
+			return default_message
+
+	## Error Handling
+
+	@app.errorhandler(422)
+	def unprocessable(error):
+		return jsonify({
+			"success": False, 
+			"error": 422,
+			"message": get_error_message(error, "unprocessable"),
+			}), 422
+
+	@app.errorhandler(404)
+	def not_found(error):
+		return jsonify({
+			"success": False, 
+			"error": 404,
+			"message": get_error_message(error, "resource not found")
+			}), 404
+
+	@app.errorhandler(400)
+	def bad_request(error):
+		return jsonify({
+			"success": False, 
+			"error": 400,
+			"message": get_error_message(error, "bad request")
+			}), 400
+
+	"""
+	@app.errorhandler(AuthError)
+	def auth_error(auth_error):
+		return jsonify({
+			"success": False, 
+			"error": auth_error.status_code,
+			"message": auth_error.error['description']
+			}), auth_error.status_code
+	"""
+
 	return app
 
 APP = create_app()
