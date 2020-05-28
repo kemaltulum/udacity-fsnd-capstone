@@ -242,6 +242,105 @@ def create_app(test_config=None):
 			'deleted': actor_id
 		})
 
+	'''
+    PATCH /movies/<movie_id>
+        Updates the movie where <movie_id> is the existing movie id
+        Responds with a 404 error if <movie_id> is not found
+        Update the corresponding fields for Movie with id <movie_id>
+    	
+	Example Request: 
+	curl --location --request PATCH 'http://localhost:5000/movies/1' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"title": "Eyvah eyvah 2"
+		}'
+
+	Example Response:
+	{
+		"success": true, 
+		"updated": {
+			"id": 1, 
+			"release_date": "Wed, 04 May 2016 00:00:00 GMT", 
+			"title": "Eyvah eyvah 2"
+		}
+	}
+	'''
+	@app.route('/movies/<int:movie_id>', methods=['PATCH'])
+	def update_movie(movie_id):
+
+		updated_movie = Movie.query.get(movie_id)
+
+		if not updated_movie:
+			abort(404, 'Movie with id: ' + str(movie_id) + ' could not be found.')
+
+		body = request.get_json()
+
+		title = body.get('title', None)
+		release_date = body.get('release_date', None)
+
+		if title:
+			updated_movie.title = title
+		if release_date:
+			updated_movie.release_date = release_date
+
+		updated_movie.update()
+
+		return jsonify({
+			"success": True,
+			"updated": updated_movie.format()
+		})
+
+	'''
+    PATCH /actors/<actor_id>
+        Updates the actor where <actor_id> is the existing actor id
+        Responds with a 404 error if <actor_id> is not found
+        Update the given fields for Actor with id <actor_id>
+    	
+	Example Request: 
+	curl --location --request PATCH 'http://localhost:5000/actors/1' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"name": "Tom Hanks"
+		}'
+
+	Example Response:
+	{
+		"success": true, 
+		"updated": {
+			"age": 54, 
+			"gender": "M", 
+			"id": 1, 
+			"name": "Tom Hanks"
+		}
+	}
+	'''
+	@app.route('/actors/<int:actor_id>', methods=['PATCH'])
+	def update_actor(actor_id):
+
+		updated_actor = Actor.query.get(actor_id)
+
+		if not updated_actor:
+			abort(404, 'Actor with id: ' + str(actor_id) + ' could not be found.')
+
+		body = request.get_json()
+
+		name = body.get('name', None)
+		age = body.get('age', None)
+		gender = body.get('gender', None)
+
+		if name:
+			updated_actor.name = name
+		if age:
+			updated_actor.age = age
+		if gender:
+			updated_actor.gender = gender
+
+		updated_actor.update()
+
+		return jsonify({
+			"success": True,
+			"updated": updated_actor.format()
+		})
 	
 
 		
