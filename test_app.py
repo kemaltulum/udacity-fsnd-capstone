@@ -44,7 +44,6 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertEqual(res.status_code, 200)
 		self.assertTrue(data['success'])
 		self.assertEqual(type(data["movies"]), type([]))
-		self.assertEqual(len(data["movies"]), 4)
 
 	def test_get_actors(self):
 		res = self.client().get('/actors')
@@ -53,7 +52,6 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertEqual(res.status_code, 200)
 		self.assertTrue(data['success'])
 		self.assertEqual(type(data["actors"]), type([]))
-		self.assertEqual(len(data["actors"]), 5)
 
 	def test_create_movies(self):
 		res = self.client().post(f'/movies', json=self.movie)
@@ -62,15 +60,9 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertEqual(res.status_code, 200)
 		self.assertTrue(data['success'])
 
-		res_2 = self.client().get('/movies')
-		data_2 = json.loads(res_2.data)
-
-		self.assertEqual(len(data_2["movies"]), 5)
-
-		self.delete_id_movie = data_2[-1]["id"]
-
 	def test_create_movies_fail_400(self):
-		res = self.client().post(f'/movies', json={"title": "name"})
+		movie_fail = {"title": "Movie"}
+		res = self.client().post(f'/movies', json=movie_fail)
 		data = json.loads(res.data)
 
 		self.assertEqual(res.status_code, 400)
@@ -84,15 +76,9 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertEqual(res.status_code, 200)
 		self.assertTrue(data['success'])
 
-		res_2 = self.client().get('/actors')
-		data_2 = json.loads(res_2.data)
-
-		self.assertEqual(len(data_2["actors"]), 6)
-
-		self.delete_id_actor = data_2[-1]["id"]
-
 	def test_create_actors_fail_400(self):
-		res = self.client().post(f'/actors', json={"name": "name"})
+		actor_fail = {"name": "Actor"}
+		res = self.client().post(f'/actors', json=actor_fail)
 		data = json.loads(res.data)
 
 		self.assertEqual(res.status_code, 400)
@@ -100,7 +86,8 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertEqual(data['message'], "Missing field for Actor")
 
 	def test_delete_movie(self):
-		res = self.client().delete(f'/movies/{self.delete_id_movie}')
+		delete_id_movie = 1
+		res = self.client().delete(f'/movies/{delete_id_movie}')
 		data = json.loads(res.data)
 
 		self.assertEqual(res.status_code, 200)
@@ -112,7 +99,7 @@ class CapstoneTestCase(unittest.TestCase):
 		found_deleted = False
 
 		for m in m_data["movies"]:
-			if m["id"] == self.delete_id_movie:
+			if m["id"] == delete_id_movie:
 				found_deleted = True
 				break
 	
@@ -127,7 +114,8 @@ class CapstoneTestCase(unittest.TestCase):
 		self.assertFalse(data['success'])
 
 	def test_delete_actor(self):
-		res = self.client().delete(f'/actors/{self.delete_id_actor}')
+		delete_id_actor = 1
+		res = self.client().delete(f'/actors/{delete_id_actor}')
 		data = json.loads(res.data)
 
 		self.assertEqual(res.status_code, 200)
@@ -139,7 +127,7 @@ class CapstoneTestCase(unittest.TestCase):
 		found_deleted = False
 
 		for a in a_data["actors"]:
-			if a["id"] == self.delete_id_actor:
+			if a["id"] == delete_id_actor:
 				found_deleted = True
 				break
 	
