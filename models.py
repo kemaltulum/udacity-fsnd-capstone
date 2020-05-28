@@ -59,7 +59,7 @@ class Movie(db.Model):
 Actor
 '''
 class Actor(db.Model):  
-  __tablename__ = 'categories'
+  __tablename__ = 'actors'
 
   id = Column(Integer, primary_key=True)
   name = Column(String)
