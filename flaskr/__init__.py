@@ -30,26 +30,35 @@ def create_app(test_config=None):
 	{
 		"movies": [
 			{
-				"id": 1, 
-				"release_date": "Wed, 04 May 2016 00:00:00 GMT", 
-				"title": "Captain America: Civil War"
-			}, 
-			{
-				"id": 2, 
-				"release_date": "Fri, 04 May 2012 00:00:00 GMT", 
-				"title": "Yah\u015fi Bat\u0131"
-			}, 
-			{
-				"id": 3, 
-				"release_date": "Fri, 14 May 2010 00:00:00 GMT", 
-				"title": "The Avengers"
-			}, 
-			{
-				"id": 4, 
-				"release_date": "Wed, 11 Sep 2019 00:00:00 GMT", 
-				"title": "The Martian"
-			}
-		], 
+			"actors": [
+				{
+				"age": 54,
+				"gender": "M",
+				"id": 1,
+				"movie_id": 2,
+				"name": "Tom Hanks"
+				},
+				{
+				"age": 45,
+				"gender": "M",
+				"id": 4,
+				"movie_id": 2,
+				"name": "Robert Downey, Jr."
+				},
+				{
+				"age": 45,
+				"gender": "F",
+				"id": 5,
+				"movie_id": 2,
+				"name": "Julia Roberts"
+				}
+			],
+			"id": 2,
+			"release_date": "Fri, 04 May 2012 00:00:00 GMT",
+			"title": "Yahşi Batı"
+			},
+			...
+		],
 		"success": true
 	}
 	'''
@@ -73,36 +82,27 @@ def create_app(test_config=None):
 	{
 		"actors": [
 			{
-				"age": 54, 
-				"gender": "M", 
-				"id": 1, 
-				"name": "Tom Hanks"
-			}, 
+			"age": 45,
+			"gender": "M",
+			"id": 6,
+			"movie_id": 1,
+			"name": "Cem Yılmaz"
+			},
 			{
-				"age": 44, 
-				"gender": "M", 
-				"id": 2, 
-				"name": "Brad Pitt"
-			}, 
+			"age": 54,
+			"gender": "M",
+			"id": 1,
+			"movie_id": 2,
+			"name": "Tom Hanks"
+			},
 			{
-				"age": 35, 
-				"gender": "F", 
-				"id": 3, 
-				"name": "Scarlett Johansson"
-			}, 
-			{
-				"age": 45, 
-				"gender": "M", 
-				"id": 4, 
-				"name": "Robert Downey, Jr."
-			}, 
-			{
-				"age": 45, 
-				"gender": "F", 
-				"id": 5, 
-				"name": "Julia Roberts"
+			"age": 44,
+			"gender": "M",
+			"id": 2,
+			"movie_id": 3,
+			"name": "Brad Pitt"
 			}
-		], 
+		],
 		"success": true
 	}
 	'''
@@ -138,6 +138,9 @@ def create_app(test_config=None):
 	@requires_auth('post:movies')
 	def create_movie(payload):
 		body = request.get_json()
+
+		if body is None:
+			abort(400)
 
 		title = body.get('title', None)
 		release_date = body.get('release_date', None)
@@ -179,6 +182,9 @@ def create_app(test_config=None):
 	def create_actor(payload):
 		body = request.get_json()
 
+		if body is None:
+			abort(400)
+
 		name = body.get('name', None)
 		age = body.get('age', None)
 		gender = body.get('gender', None)
@@ -214,7 +220,7 @@ def create_app(test_config=None):
 		movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
 
 		if movie is None:
-			abort(404)
+			abort(404, "No movie with given id " + str(movie_id) + " is found")
 
 		movie.delete()
 
@@ -242,7 +248,7 @@ def create_app(test_config=None):
 		actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
 
 		if actor is None:
-			abort(404)
+			abort(404, "No actor with given id " + str(actor_id) + " is found")
 
 		actor.delete()
 
@@ -346,10 +352,13 @@ def create_app(test_config=None):
 			updated_actor.age = age
 		if gender:
 			updated_actor.gender = gender
-		if gender:
+		if movie_id:
 			updated_actor.movie_id = movie_id
 
-		updated_actor.update()
+		try:
+			updated_actor.update()
+		except:
+			abort(400, "Bad formatted request due to nonexistent movie id"  + str(movie_id))
 
 		return jsonify({
 			"success": True,
@@ -399,10 +408,10 @@ def create_app(test_config=None):
 			"message": auth_error.error['description']
 			}), auth_error.status_code
 	
-
 	return app
 
 APP = create_app()
 
 if __name__ == '__main__':
 		APP.run(host='0.0.0.0', port=8080, debug=True)
+		
