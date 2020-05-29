@@ -182,12 +182,13 @@ def create_app(test_config=None):
 		name = body.get('name', None)
 		age = body.get('age', None)
 		gender = body.get('gender', None)
+		movie_id = body.get('movie_id', None)
 
 
-		if name is None or age is None or gender is None:
+		if name is None or age is None or gender is None or movie_id is None:
 			abort(400, "Missing field for Actor")
 		
-		actor = Actor(name=name, age=age, gender=gender)
+		actor = Actor(name=name, age=age, gender=gender, movie_id=movie_id)
 
 		actor.insert()
 
@@ -337,6 +338,7 @@ def create_app(test_config=None):
 		name = body.get('name', None)
 		age = body.get('age', None)
 		gender = body.get('gender', None)
+		movie_id = body.get('movie_id', None)
 
 		if name:
 			updated_actor.name = name
@@ -344,6 +346,8 @@ def create_app(test_config=None):
 			updated_actor.age = age
 		if gender:
 			updated_actor.gender = gender
+		if gender:
+			updated_actor.movie_id = movie_id
 
 		updated_actor.update()
 
