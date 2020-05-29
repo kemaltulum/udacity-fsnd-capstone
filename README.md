@@ -144,7 +144,10 @@ postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
 ```
 For more details [look at the documentation (31.1.1.2. Connection URIs)](https://www.postgresql.org/docs/9.3/libpq-connect.html)
 
-4. Setup the environment variables for Auth0 under `setup.sh`
+4. Setup the environment variables for Auth0 under `setup.sh` running:
+	```bash
+	source ./setup.sh 
+	```
 5.  To run the server locally, execute:
 
     ```bash
@@ -171,7 +174,7 @@ There are two models:
 ### Error Handling
 
 Errors are returned as JSON objects in the following format:
-```
+```json
 {
     "success": False, 
     "error": 400,
@@ -188,6 +191,225 @@ The API will return three error types when requests fail:
 
 ### Endpoints
 
-#### GET \movies
 
-#### GET \actors
+#### GET /movies 
+* Get all movies
+
+* Require `view:movies` permission
+
+* **Example Request:** `curl 'http://localhost:5000/movies'`
+
+* **Expected Result:**
+    ```json
+	{
+		"movies": [
+			{
+			"actors": [
+				{
+				"age": 54,
+				"gender": "M",
+				"id": 1,
+				"movie_id": 2,
+				"name": "Tom Hanks"
+				},
+				{
+				"age": 45,
+				"gender": "M",
+				"id": 4,
+				"movie_id": 2,
+				"name": "Robert Downey, Jr."
+				},
+				{
+				"age": 45,
+				"gender": "F",
+				"id": 5,
+				"movie_id": 2,
+				"name": "Julia Roberts"
+				}
+			],
+			"id": 2,
+			"release_date": "Fri, 04 May 2012 00:00:00 GMT",
+			"title": "Yahşi Batı"
+			},
+			...
+		],
+		"success": true
+    }
+    ```
+	
+#### GET /actors 
+* Get all actors
+
+* Requires `view:actors` permission
+
+* **Example Request:** `curl 'http://localhost:5000/actors'`
+
+* **Expected Result:**
+    ```json
+	{
+		"actors": [
+			{
+			"age": 45,
+			"gender": "M",
+			"id": 6,
+			"movie_id": 1,
+			"name": "Cem Yılmaz"
+			},
+			{
+			"age": 54,
+			"gender": "M",
+			"id": 1,
+			"movie_id": 2,
+			"name": "Tom Hanks"
+			},
+			{
+			"age": 44,
+			"gender": "M",
+			"id": 2,
+			"movie_id": 3,
+			"name": "Brad Pitt"
+			}
+		],
+		"success": true
+	}
+	```
+	
+#### POST /movies
+* Creates a new movie.
+
+* Requires `post:movies` permission
+
+* Requires the title and release date.
+
+* **Example Request:** (Create)
+    ```bash
+	curl --location --request POST 'http://localhost:5000/movies' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"title": "Pek Yakında",
+			"release_date": "19-02-2020"
+		}'
+    ```
+    
+* **Example Response:**
+    ```bash
+	{
+		"success": true
+	}
+    ```
+
+#### POST /actors
+* Creates a new actor.
+
+* Requires `post:actors` permission
+
+* Requires the name, age and gender of the actor.
+
+* **Example Request:** (Create)
+    ```json
+	curl --location --request POST 'http://localhost:5000/actors' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"name": "Cem Yılmaz",
+			"age": "45",
+			"gender": "M"
+        }'
+    ```
+    
+* **Example Response:**
+    ```json
+	{
+		"success": true
+    }
+    ```
+
+#### DELETE /movies/<int:movie_id>
+* Deletes the movie with given id 
+
+* Require `delete:movies` permission
+
+* **Example Request:** `curl --request DELETE 'http://localhost:5000/movies/1'`
+
+* **Example Response:**
+    ```json
+	{
+		"deleted": 1,
+		"success": true
+    }
+    ```
+    
+#### DELETE /actors/<int:actor_id>
+* Deletes the actor with given id 
+
+* Require `delete:actors` permission
+
+* **Example Request:** `curl --request DELETE 'http://localhost:5000/actors/1'`
+
+* **Example Response:**
+    ```json
+	{
+		"deleted": 1,
+		"success": true
+    }
+    ```
+
+#### PATCH /movies/<movie_id>
+* Updates the movie where <movie_id> is the existing movie id
+
+* Require `update:movies` permission
+
+* Responds with a 404 error if <movie_id> is not found
+
+* Update the corresponding fields for Movie with id <movie_id>
+
+* **Example Request:** 
+	```json
+    curl --location --request PATCH 'http://localhost:5000/movies/1' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"title": "Eyvah eyvah 2"
+        }'
+  ```
+  
+* **Example Response:**
+    ```json
+	{
+		"success": true, 
+		"updated": {
+			"id": 1, 
+			"release_date": "Wed, 04 May 2016 00:00:00 GMT", 
+			"title": "Eyvah eyvah 2"
+		}
+    }
+    ```
+	
+#### PATCH /actors/<actor_id>
+* Updates the actor where <actor_id> is the existing actor id
+
+* Require `update:actors`
+
+* Responds with a 404 error if <actor_id> is not found
+
+* Update the given fields for Actor with id <actor_id>
+
+* **Example Request:** 
+	```json
+    curl --location --request PATCH 'http://localhost:5000/actors/1' \
+		--header 'Content-Type: application/json' \
+		--data-raw '{
+			"name": "Tom Hanks"
+        }'
+  ```
+  
+* **Example Response:**
+    ```json
+	{
+		"success": true, 
+		"updated": {
+			"age": 54, 
+			"gender": "M", 
+			"id": 1, 
+			"name": "Tom Hanks"
+		}
+	}
+	```
