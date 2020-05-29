@@ -4,7 +4,6 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 import os
-print(os.environ['HOME'])
 
 
 """
