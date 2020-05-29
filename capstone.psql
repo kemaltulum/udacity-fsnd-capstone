@@ -42,7 +42,8 @@ CREATE TABLE public.actors (
     id integer NOT NULL,
     name character varying,
     age integer,
-    gender character varying
+    gender character varying,
+    movie_id integer
 );
 
 
@@ -69,6 +70,17 @@ ALTER TABLE public.actors_id_seq OWNER TO kemal;
 
 ALTER SEQUENCE public.actors_id_seq OWNED BY public.actors.id;
 
+
+--
+-- Name: alembic_version; Type: TABLE; Schema: public; Owner: kemal
+--
+
+CREATE TABLE public.alembic_version (
+    version_num character varying(32) NOT NULL
+);
+
+
+ALTER TABLE public.alembic_version OWNER TO kemal;
 
 --
 -- Name: movies; Type: TABLE; Schema: public; Owner: kemal
@@ -123,12 +135,22 @@ ALTER TABLE ONLY public.movies ALTER COLUMN id SET DEFAULT nextval('public.movie
 -- Data for Name: actors; Type: TABLE DATA; Schema: public; Owner: kemal
 --
 
-COPY public.actors (id, name, age, gender) FROM stdin;
-1	Tom Hanks	54	M
-2	Brad Pitt	44	M
-3	Scarlett Johansson	35	F
-4	Robert Downey, Jr.	45	M
-5	Julia Roberts	45	F
+COPY public.actors (id, name, age, gender, movie_id) FROM stdin;
+6	Cem Yılmaz	45	M	1
+1	Tom Hanks	54	M	2
+2	Brad Pitt	44	M	3
+3	Scarlett Johansson	35	F	3
+4	Robert Downey, Jr.	45	M	2
+5	Julia Roberts	45	F	2
+\.
+
+
+--
+-- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: kemal
+--
+
+COPY public.alembic_version (version_num) FROM stdin;
+35291c8315b4
 \.
 
 
@@ -137,10 +159,11 @@ COPY public.actors (id, name, age, gender) FROM stdin;
 --
 
 COPY public.movies (id, title, release_date) FROM stdin;
-1	Captain America: Civil War	2016-05-04 00:00:00
 2	Yahşi Batı	2012-05-04 00:00:00
 3	The Avengers	2010-05-14 00:00:00
 4	The Martian	2019-09-11 00:00:00
+5	Pek Yakında	2020-02-19 00:00:00
+1	Eyvah eyvah 2	2016-05-04 00:00:00
 \.
 
 
@@ -148,14 +171,14 @@ COPY public.movies (id, title, release_date) FROM stdin;
 -- Name: actors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kemal
 --
 
-SELECT pg_catalog.setval('public.actors_id_seq', 5, true);
+SELECT pg_catalog.setval('public.actors_id_seq', 6, true);
 
 
 --
 -- Name: movies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kemal
 --
 
-SELECT pg_catalog.setval('public.movies_id_seq', 4, true);
+SELECT pg_catalog.setval('public.movies_id_seq', 5, true);
 
 
 --
@@ -167,11 +190,27 @@ ALTER TABLE ONLY public.actors
 
 
 --
+-- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: kemal
+--
+
+ALTER TABLE ONLY public.alembic_version
+    ADD CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num);
+
+
+--
 -- Name: movies movies_pkey; Type: CONSTRAINT; Schema: public; Owner: kemal
 --
 
 ALTER TABLE ONLY public.movies
     ADD CONSTRAINT movies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: actors actors_movie_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kemal
+--
+
+ALTER TABLE ONLY public.actors
+    ADD CONSTRAINT actors_movie_id_fkey FOREIGN KEY (movie_id) REFERENCES public.movies(id);
 
 
 --
