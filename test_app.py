@@ -30,7 +30,8 @@ class CapstoneTestCase(unittest.TestCase):
 		self.actor = {
 			"name": "Cem Yılmaz",
 			"age": 45,
-			"gender": 'M'
+			"gender": 'M',
+			"movie_id": 2
 		}
 
 		# Set up authentication tokens info
