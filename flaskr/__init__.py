@@ -6,6 +6,8 @@ from models import setup_db, Movie, Actor
 
 from auth.auth import AuthError, requires_auth
 
+from datetime import datetime
+
 def create_app(test_config=None):
 	# create and configure the app
 	app = Flask(__name__)
@@ -126,7 +128,7 @@ def create_app(test_config=None):
 		--header 'Content-Type: application/json' \
 		--data-raw '{
 			"title": "Pek Yakında",
-			"release_date": "19-02-2020"
+			"release_date": "2020-02-19"
 		}'
 
 	Example Response: 

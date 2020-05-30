@@ -24,7 +24,7 @@ class CapstoneTestCase(unittest.TestCase):
 
 		self.movie = {
 			"title": "Pek Yakında",
-			"release_date": "19-02-2020"
+			"release_date": "2020-11-02"
 		}
 
 		self.actor = {
